@@ -1,26 +1,3 @@
-# ===========================================
-# Concessionária Inteligente Bem — .htaccess raiz nova-versao
-# Redireciona tudo para /public/
-# ===========================================
-
-RewriteEngine On
-
-# Força HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Redireciona para /public/ (webroot real)
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteRule ^(.*)$ /public/$1 [L]
-
-# Bloqueia acesso a arquivos sensíveis
-<FilesMatch "\.(env|sql|log|json|sh|bak|txt)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Bloqueia acesso direto a pastas privadas
-RedirectMatch 403 ^/app/
-RedirectMatch 403 ^/storage/
-RedirectMatch 403 ^/database/
-RedirectMatch 403 ^/docs/
+# Arquivo mantido vazio intencionalmente para deploy Docker/Render.
+# As regras de rewrite ficam em public/.htaccess (webroot real).
+# Para deploy Locaweb, restaurar as regras deste arquivo.
