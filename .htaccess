@@ -1,0 +1,29 @@
+# /cardsaudebank.com.br/.htaccess
+RewriteEngine On
+
+# Forçar HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Proteger arquivos sensíveis
+<FilesMatch "\.(sql|log|ini|env)$">
+    Require all denied
+</FilesMatch>
+
+# API RESTful
+RewriteRule ^api/(.+)\.php$ api/$1.php [L]
+
+# Cache para assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# Prevenir hotlinking de imagens
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https://(www\.)?cardsaudebank\.com\.br [NC]
+RewriteRule \.(jpg|jpeg|png|gif)$ - [F]

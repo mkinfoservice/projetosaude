@@ -1,0 +1,22 @@
+# PROTEÇÃO DA PASTA DE UPLOADS
+# Bloqueia execução de qualquer script — apenas servir arquivos estáticos permitidos
+
+Options -Indexes -ExecCGI
+
+# Bloqueia execução de PHP e outros scripts
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|cgi|sh|asp|aspx|jsp|exe|com|bat|cmd|dll|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Permite apenas tipos de arquivo seguros
+<FilesMatch "\.(pdf|jpg|jpeg|png|gif|webp)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Header de segurança
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set Content-Disposition "attachment"
+</IfModule>

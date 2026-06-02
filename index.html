@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concessionária Inteligente Bem - Sistema Multi-Operadoras</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; color: #333; }
+.navbar { background: #003366; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; margin-bottom: 20px; }
+.navbar a { color: white; text-decoration: none; margin-left: 15px; cursor: pointer; font-weight: 500; }
+.navbar a:hover { text-decoration: underline; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
+.modal.active { display: flex; }
+.modal-content { background: #fff; padding: 20px; border-radius: 10px; max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; }
+.hidden { display: none !important; }
+.view { display: none; }
+.view.active { display: block; }
+.step { display: none; }
+.step.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #f1f5f9; font-weight: 600; }
+button, input, select, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+button { background: #2563eb; color: #fff; border: none; cursor: pointer; font-weight: 500; transition: 0.2s; }
+button:hover { background: #1d4ed8; }
+button.secondary { background: #64748b; }
+button.success { background: #16a34a; }
+button.danger { background: #dc2626; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.panel-section { background: #fff; padding: 15px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer; background: none; border: none; color: #666; width: auto; }
+.nav-links { display: flex; gap: 15px; }
+.whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; }
+@media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } .nav-links { flex-direction: column; gap: 5px; } }
+</style>
+</head>
+<body>
+<!-- NAVBAR -->
+<div class="navbar">
+<div class="logo">🏥 Concessionária Inteligente Bem</div>
+<div class="nav-links">
+<a onclick="router('home')">🏠 Início</a>
+<a onclick="router('empresa')">🏢 Empresas</a>
+<a onclick="openModal('modal-login')">🔐 Login</a>
+<a onclick="openModal('modal-cotacao')">📊 Cotação</a>
+<a onclick="openModal('modal-atendimento-auto')">💬 Atendimento Auto</a>
+<a onclick="logout()">🚪 Sair</a>
+</div>
+</div>
+<!-- BOTÃO WHATSAPP -->
+<div class="whatsapp-float" onclick="openModal('modal-atendimento-auto')" title="Atendimento Automático">💬</div>
+<!-- PÁGINA PRINCIPAL -->
+<div id="view-home" class="view active">
+<div id="vitrine" style="width:100%; overflow:hidden; margin-bottom:20px; border-radius:10px;">
+
+<div id="slides" style="display:flex; transition: transform 1s ease;">
+<img src="imagemlanc1.png" style="width:100%; height:300px; object-fit:cover; flex-shrink:0;">
+<img src="imagemfern.png" style="width:100%; height:300px; object-fit:cover; flex-shrink:0;">
+<img src="imagemamep.png" style="width:100%; height:300px; object-fit:cover; flex-shrink:0;">
+<img src="imagemL.png" style="width:100%; height:300px; object-fit:cover; flex-shrink:0;">
+</div>
+
+</div>
+<script>
+let idx=0;
+setInterval(()=>{
+const slides=document.getElementById('slides');
+idx=(idx+1)%4;
+slides.style.transform='translateX(' + (-idx*100) + '%)';
+},7000);
+</script>
+<div style="text-align:center; padding: 2rem 0;">
+<h2>Planos acessíveis para você e sua família</h2>
+</div>
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-bottom: 20px;">
+<div style="background:white; padding:10px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); text-align:center;">
+<img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=300&q=80" alt="CEMERU" style="width:100%;border-radius:8px;margin-bottom:10px;">
+<h4>💙 CEMERU - 50 Anos Cuidando da Zona Oeste</h4>
+<p>Tradição, responsabilidade e evolução há 50 anos.</p>
+<button onclick="openModal('modal-ficha')">Conhecer Planos</button>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); text-align:center;">
+<img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=300&q=80" alt="Saúde" style="width:100%;border-radius:8px;margin-bottom:10px;">
+<h4>❤️ Saúde Assim - O Plano Oficial do Carioca</h4>
+<p>Qualidade e tradição carioca. Planos Unimed.</p>
+<button onclick="openModal('modal-ficha')">Cotar Plano</button>
+</div>
+</div>
+<h3 style="text-align:center; margin-top:20px;">🎯 Escolha seu Plano de Saúde</h3>
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>🏥 AMIL</h4><p>Ver Planos ⚕️</p>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>⚕️ UNIMED</h4><p>Ver Planos 📈</p>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>📈 KLINI SAÚDE</h4><p>Ver Planos 🛡️</p>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>🛡️ CEMERU</h4><p>Ver Planos 🌍</p>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>🌍 SAMOC</h4><p>Ver Planos 💡</p>
+</div>
+<div style="background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer;" onclick="openModal('modal-ficha')">
+<h4>💡 OPLAN SAÚDE</h4><p>Ver Planos</p>
+</div>
+</div>
+</div>
+<!-- PÁGINA EMPRESAS -->
+<div id="view-empresa" class="view">
+<div class="panel-section">
+<h2>🏢 Cadastro de Empresa</h2>
+<div class="grid-2">
+<div class="form-group"><label>CNPJ *</label><input type="text" id="emp-cnpj" placeholder="00.000.000/0000-00" onblur="validarCNPJ()"></div>
+<div class="form-group"><label>CEP *</label><input type="text" id="emp-cep" onblur="autoFillCEP('emp')" placeholder="00000-000"></div>
+<div class="form-group"><label>Endereço</label><input type="text" id="emp-endereco" readonly></div>
+<div class="form-group"><label>Bairro</label><input type="text" id="emp-bairro" readonly></div>
+<div class="form-group"><label>Número</label><input type="text" id="emp-num"></div>
+<div class="form-group"><label>Telefone *</label><input type="text" id="emp-tel" placeholder="(00) 00000-0000"></div>
+<div class="form-group"><label>E-mail *</label><input type="email" id="emp-email"></div>
+<div class="form-group"><label>Senha (mínimo 8 números) *</label><input type="password" id="emp-senha" pattern="[0-9]{8,}" placeholder="Apenas números"></div>
+</div>
+<div class="form-group"><label>Contrato Social (PDF) *</label><input type="file" id="emp-pdf" accept=".pdf"></div>
+<button onclick="cadastrarEmpresa()">Cadastrar Empresa e Gerar PIX (R$ 490,00)</button>
+</div>
+<!-- MÓDULO DE LOGINS (VENDEDORES) -->
+<div class="panel-section" id="modulo-logins" style="display:none;">
+<h3>👥 Gestão de Logins (Vendedores)</h3>
+<div class="form-group"><label>Quantidade de Logins Desejada *</label><input type="number" id="qtd-logins" min="1" oninput="calcularPrecoLogins()"></div>
+<p id="preco-display" style="font-weight:bold; color:#2563eb;"></p>
+<button onclick="gerarPixLogins()">Gerar PIX QR Code</button>
+<table style="margin-top:15px;">
+<thead><tr><th>ID Acesso</th><th>Nome</th><th>Status</th></tr></thead>
+<tbody id="tabela-logins"></tbody>
+</table>
+</div>
+</div>
+<!-- PAINEL SUPERVISOR -->
+<div id="view-supervisor" class="view">
+<div class="panel-section">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<h3>👁️ Painel Supervisor Operacional</h3>
+<button class="secondary" style="width:auto;" onclick="logout()">🚪 Sair</button>
+</div>
+<table>
+<thead><tr><th>Protocolo</th><th>Cliente</th><th>Operadora</th><th>Vendedor</th><th>Status</th><th>Decisão</th></tr></thead>
+<tbody id="tbody-supervisor"><tr><td colspan="6">Aguardando propostas...</td></tr></tbody>
+</table>
+</div>
+</div>
+<!-- PAINEL GERENTE -->
+<div id="view-gerente" class="view">
+<div class="panel-section">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<h3>📊 Painel Gerente de Negócios</h3>
+<button class="secondary" style="width:auto;" onclick="logout()">🚪 Sair</button>
+</div>
+<table>
+<thead><tr><th>Protocolo</th><th>Cliente</th><th>Operadora</th><th>Status</th><th>Decisão</th></tr></thead>
+<tbody id="tbody-gerente"><tr><td colspan="5">Aguardando validações...</td></tr></tbody>
+</table>
+</div>
+</div>
+<!-- PAINEL VENDEDOR -->
+<div id="view-vendedor" class="view">
+<div class="panel-section">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<h3>🤝 Painel Vendedor / Corretor</h3>
+<button class="secondary" style="width:auto;" onclick="logout()">🚪 Sair</button>
+</div>
+<p id="msg-vendedor-info"></p>
+<table>
+<thead><tr><th>Protocolo</th><th>Cliente</th><th>Operadora</th><th>Status</th><th>Comissão</th></tr></thead>
+<tbody id="tbody-vendedor"><tr><td colspan="5">Nenhum cliente cadastrado...</td></tr></tbody>
+</table>
+</div>
+</div>
+<!-- MODAL CADASTRO EMPRESA -->
+<div id="modal-cad-empresa" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-cad-empresa')">×</button>
+<h2>🏢 Cadastro de Empresa</h2>
+<div class="grid-2">
+<div class="form-group"><label>CNPJ *</label><input type="text" id="cad-emp-cnpj" placeholder="00.000.000/0000-00" onblur="validarCNPJ()"></div>
+<div class="form-group"><label>CEP *</label><input type="text" id="cad-emp-cep" onblur="autoFillCEP('cad-emp')" placeholder="00000-000"></div>
+<div class="form-group"><label>Endereço</label><input type="text" id="cad-emp-end" readonly></div>
+<div class="form-group"><label>Bairro</label><input type="text" id="cad-emp-bairro" readonly></div>
+<div class="form-group"><label>Número</label><input type="text" id="cad-emp-num"></div>
+<div class="form-group"><label>Telefone *</label><input type="text" id="cad-emp-tel" placeholder="(00) 00000-0000"></div>
+<div class="form-group"><label>E-mail *</label><input type="email" id="cad-emp-email"></div>
+<div class="form-group"><label>Senha (mínimo 8 números) *</label><input type="password" id="cad-emp-senha" pattern="[0-9]{8,}" placeholder="Apenas números"></div>
+</div>
+<div class="form-group"><label>Contrato Social (PDF) *</label><input type="file" id="cad-emp-pdf" accept=".pdf"></div>
+<button onclick="cadastrarEmpresa()">Cadastrar e Gerar PIX (R$ 490,00)</button>
+</div>
+</div>
+<!-- MODAL PAGAMENTO EMPRESA -->
+<div id="modal-pag-empresa" class="modal">
+<div class="modal-content" style="text-align:center;">
+<button class="close-btn" onclick="closeModal('modal-pag-empresa')">×</button>
+<h2>💳 Pagamento Empresa</h2>
+<p style="font-size:1.2rem; margin:10px 0;">Valor: <strong>R$ 490,00</strong></p>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX_EMPRESA_490" alt="QR Code" style="margin:10px 0;">
+<button class="success" onclick="confirmarPagEmpresa()">✅ Confirmar Pagamento</button>
+</div>
+</div>
+<!-- MODAL CADASTRO VENDEDOR -->
+<div id="modal-cad-vendedor" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-cad-vendedor')">×</button>
+<h2>📝 Cadastro de Vendedor / Corretor</h2>
+<div class="grid-2">
+<div class="form-group"><label>Nome Completo *</label><input type="text" id="cad-vend-nome"></div>
+<div class="form-group"><label>CPF *</label><input type="text" id="cad-vend-cpf"></div>
+<div class="form-group"><label>RG *</label><input type="text" id="cad-vend-rg"></div>
+<div class="form-group"><label>CEP *</label><input type="text" id="cad-vend-cep" onblur="autoFillCEP('cad-vend')"></div>
+<div class="form-group"><label>Endereço</label><input type="text" id="cad-vend-end" readonly></div>
+<div class="form-group"><label>Bairro</label><input type="text" id="cad-vend-bairro" readonly></div>
+<div class="form-group"><label>Número</label><input type="text" id="cad-vend-num"></div>
+<div class="form-group"><label>Telefone *</label><input type="text" id="cad-vend-tel" placeholder="(00) 00000-0000"></div>
+<div class="form-group"><label>E-mail *</label><input type="email" id="cad-vend-email"></div>
+<div class="form-group"><label>Senha *</label><input type="password" id="cad-vend-senha"></div>
+</div>
+<div class="form-group"><label>Documento Frente *</label><input type="file" id="cad-vend-frente"></div>
+<div class="form-group"><label>Documento Verso *</label><input type="file" id="cad-vend-verso"></div>
+<button onclick="cadastrarVendedor()">Cadastrar e Gerar PIX (R$ 120,00)</button>
+</div>
+</div>
+<!-- MODAL PAGAMENTO VENDEDOR -->
+<div id="modal-pag-vendedor" class="modal">
+<div class="modal-content" style="text-align:center;">
+<button class="close-btn" onclick="closeModal('modal-pag-vendedor')">×</button>
+<h2>💳 Pagamento Vendedor</h2>
+<p style="font-size:1.2rem; margin:10px 0;">Mensalidade: <strong>R$ 120,00</strong></p>
+<img id="qr-vendedor" src="" alt="QR Code" style="margin:10px 0;">
+<button class="success" onclick="confirmarPagVendedor()">✅ Confirmar Pagamento</button>
+</div>
+</div>
+<!-- MODAL ATENDIMENTO AUTOMÁTICO -->
+<div id="modal-atendimento-auto" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-atendimento-auto')">×</button>
+<h2>💬 Atendimento Inteligente</h2>
+<div id="auto-step-1" class="step active">
+<p>Olá! Sou o assistente virtual. Para quantas pessoas será o plano?</p>
+<input type="number" id="auto-qtd" placeholder="Ex: 3">
+<button onclick="autoNext(2)">Próximo ➜</button>
+</div>
+<div id="auto-step-2" class="step">
+<p>Quais são as faixas etárias?</p>
+<input type="text" id="auto-idades" placeholder="Ex: 30, 35, 5">
+<button class="secondary" onclick="autoNext(1)">← Voltar</button>
+<button onclick="autoNext(3)">Próximo ➜</button>
+</div>
+<div id="auto-step-3" class="step">
+<p>Qual é a profissão?</p>
+<input type="text" id="auto-profissao" placeholder="Sua profissão">
+<button class="secondary" onclick="autoNext(2)">← Voltar</button>
+<button onclick="autoNext(4)">Próximo ➜</button>
+</div>
+<div id="auto-step-4" class="step">
+<p>Digite o telefone do vendedor:</p>
+<input type="text" id="auto-tel-vend" placeholder="(00) 00000-0000" oninput="verificarCNPJAuto()">
+<p id="auto-cnpj-msg" style="font-size:0.9rem; color:#666;"></p>
+<button class="secondary" onclick="autoNext(3)">← Voltar</button>
+<button onclick="autoIdentificar()">Identificar ➜</button>
+</div>
+<div id="auto-step-5" class="step">
+<p id="auto-empresa-info"></p>
+<button onclick="autoNext(6)">Ver Tabela de Preços ➜</button>
+</div>
+<div id="auto-step-6" class="step">
+<h3>📊 Tabela de Preços</h3>
+<div class="form-group">
+<label>Escolha a Empresa:</label>
+<select id="auto-empresa-escolha" onchange="atualizarTabelaAuto()">
+<option value="">Selecione...</option>
+<option value="AMIL">🏥 AMIL</option>
+<option value="UNIMED">⚕️ UNIMED</option>
+<option value="KLINI SAÚDE">📈 KLINI SAÚDE</option>
+<option value="CEMERU">🛡️ CEMERU</option>
+<option value="SAMOC">🌍 SAMOC</option>
+<option value="OPLAN SAÚDE">💡 OPLAN SAÚDE</option>
+</select>
+</div>
+<table id="tabela-auto">
+<thead><tr><th>Operadora</th><th>Plano</th><th>0-18 anos</th><th>19-28 anos</th><th>29-43 anos</th><th>44-58 anos</th><th>59+ anos</th></tr></thead>
+<tbody id="tbody-auto">
+<tr><td colspan="7" style="text-align:center;">Selecione uma empresa para ver os preços</td></tr>
+</tbody>
+</table>
+<button class="success" onclick="autoContinuar()">Continuar para Cadastro ➜</button>
+<button class="secondary" onclick="autoNext(5)">← Voltar</button>
+</div>
+</div>
+</div>
+<!-- MODAL LOGIN -->
+<div id="modal-login" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-login')">×</button>
+<h2>🔐 Acesso Administrativo</h2>
+<div class="form-group">
+<label>Perfil de Acesso</label>
+<select id="login-perfil" onchange="checkPerfilLogin()">
+<option value="">Selecione...</option>
+<option value="supervisor">Supervisor Operacional</option>
+<option value="gerente">Gerente de Negócios</option>
+<option value="vendedor">Vendedor / Corretor</option>
+<option value="empresa">Empresa</option>
+</select>
+</div>
+<div class="form-group"><label>Telefone / ID *</label><input type="text" id="login-tel" placeholder="Telefone ou ID de Acesso"></div>
+<div class="form-group"><label>Senha</label><input type="password" id="login-senha" placeholder="Senha"></div>
+<button onclick="doLogin()">Entrar no Sistema</button>
+<p style="font-size:12px; margin-top:10px;">Primeiro acesso? <a href="#" onclick="openModal('modal-cad-vendedor'); closeModal('modal-login'); return false;">Cadastre-se como Vendedor</a></p>
+</div>
+</div>
+<!-- MODAL COTAÇÃO -->
+<div id="modal-cotacao" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-cotacao')">×</button>
+<h2>📊 Simulação de Cotação Inteligente</h2>
+<div id="step-1" class="step active">
+<h3>Etapa 1: Para quantas pessoas será o plano?</h3>
+<input type="number" id="q-pessoas" placeholder="Ex: 3">
+<button onclick="nextStep(2)">Próximo ➜</button>
+</div>
+<div id="step-2" class="step">
+<h3>Etapa 2: Quais são as idades?</h3>
+<input type="text" id="q-idades" placeholder="Ex: 30, 35, 5">
+<button class="secondary" onclick="prevStep(1)">← Voltar</button>
+<button onclick="nextStep(3)">Próximo ➜</button>
+</div>
+<div id="step-3" class="step">
+<h3>Etapa 3: Qual é sua profissão?</h3>
+<input type="text" id="q-profissao" placeholder="Sua profissão">
+<button class="secondary" onclick="prevStep(2)">← Voltar</button>
+<button onclick="nextStep(4)">Próximo ➜</button>
+</div>
+<div id="step-4" class="step">
+<h3>Etapa 4: Digite o número do telefone do vendedor</h3>
+<p style="font-size:0.9rem; color:#666;">O sistema identificará o perfil vendedor automaticamente. Este telefone deve estar no panfleto/flyer.</p>
+<input type="text" id="q-tel-vendedor" placeholder="(21) 99999-9999">
+<button class="secondary" onclick="prevStep(3)">← Voltar</button>
+<button onclick="identificarVendedor()">Identificar e Avançar ➜</button>
+</div>
+<div id="step-5" class="step">
+<h3>Etapa 5: Escolha a empresa e categoria do plano</h3>
+<div class="form-group">
+<label><input type="checkbox" id="q-copart" onchange="togglePriceTable()" style="width:auto;"> Com Coparticipação</label>
+</div>
+<div id="price-table-container">
+<table class="price-table" id="table-sem-copart">
+<thead><tr><th>Operadora</th><th>Plano</th><th>0-18 anos</th><th>19-28 anos</th><th>29-43 anos</th><th>44-58 anos</th><th>59+ anos</th></tr></thead>
+<tbody>
+<tr><td>🏥 AMIL</td><td>Completo</td><td>R$ 280</td><td>R$ 320</td><td>R$ 380</td><td>R$ 450</td><td>R$ 580</td></tr>
+<tr><td>⚕️ UNIMED</td><td>Completo</td><td>R$ 290</td><td>R$ 330</td><td>R$ 390</td><td>R$ 460</td><td>R$ 590</td></tr>
+<tr><td>📈 KLINI</td><td>Flex</td><td>R$ 260</td><td>R$ 300</td><td>R$ 360</td><td>R$ 430</td><td>R$ 550</td></tr>
+<tr><td>🛡️ CEMERU</td><td>Tradicional</td><td>R$ 270</td><td>R$ 310</td><td>R$ 370</td><td>R$ 440</td><td>R$ 560</td></tr>
+<tr><td>🌍 SAMOC</td><td>Regional</td><td>R$ 250</td><td>R$ 290</td><td>R$ 350</td><td>R$ 420</td><td>R$ 540</td></tr>
+<tr><td>💡 OPLAN</td><td>Flex</td><td>R$ 240</td><td>R$ 280</td><td>R$ 340</td><td>R$ 410</td><td>R$ 530</td></tr>
+<tr><td>⚖️ ABRABDIR</td><td>Advogados e Bacharéis</td><td>R$ 260</td><td>R$ 300</td><td>R$ 360</td><td>R$ 430</td><td>R$ 550</td></tr>
+<tr><td>💼 ABRACEM</td><td>Consultores Empresariais</td><td>R$ 250</td><td>R$ 290</td><td>R$ 350</td><td>R$ 420</td><td>R$ 540</td></tr>
+<tr><td>🌟 ABA</td><td>Desenvolvimento Social</td><td>R$ 240</td><td>R$ 280</td><td>R$ 340</td><td>R$ 410</td><td>R$ 530</td></tr>
+</tbody>
+</table>
+<table class="price-table hidden" id="table-com-copart">
+<thead><tr><th>Operadora</th><th>Plano</th><th>0-18 anos</th><th>19-28 anos</th><th>29-43 anos</th><th>44-58 anos</th><th>59+ anos</th></tr></thead>
+<tbody>
+<tr><td>🏥 AMIL</td><td>Completo</td><td>R$ 220</td><td>R$ 250</td><td>R$ 300</td><td>R$ 360</td><td>R$ 460</td></tr>
+<tr><td>⚕️ UNIMED</td><td>Completo</td><td>R$ 230</td><td>R$ 260</td><td>R$ 310</td><td>R$ 370</td><td>R$ 470</td></tr>
+<tr><td>📈 KLINI</td><td>Flex</td><td>R$ 200</td><td>R$ 230</td><td>R$ 280</td><td>R$ 340</td><td>R$ 440</td></tr>
+<tr><td>🛡️ CEMERU</td><td>Tradicional</td><td>R$ 210</td><td>R$ 240</td><td>R$ 290</td><td>R$ 350</td><td>R$ 450</td></tr>
+<tr><td>🌍 SAMOC</td><td>Regional</td><td>R$ 190</td><td>R$ 220</td><td>R$ 270</td><td>R$ 330</td><td>R$ 430</td></tr>
+<tr><td>💡 OPLAN</td><td>Flex</td><td>R$ 180</td><td>R$ 210</td><td>R$ 260</td><td>R$ 320</td><td>R$ 420</td></tr>
+<tr><td>⚖️ ABRABDIR</td><td>Advogados e Bacharéis</td><td>R$ 200</td><td>R$ 230</td><td>R$ 280</td><td>R$ 340</td><td>R$ 440</td></tr>
+<tr><td>💼 ABRACEM</td><td>Consultores Empresariais</td><td>R$ 190</td><td>R$ 220</td><td>R$ 270</td><td>R$ 330</td><td>R$ 430</td></tr>
+<tr><td>🌟 ABA</td><td>Desenvolvimento Social</td><td>R$ 180</td><td>R$ 210</td><td>R$ 260</td><td>R$ 320</td><td>R$ 420</td></tr>
+</tbody>
+</table>
+</div>
+<div class="form-group">
+<label>Operadora Escolhida:</label>
+<select id="q-operadora">
+<option value="">Selecione...</option>
+<option value="AMIL">🏥 AMIL</option>
+<option value="UNIMED">⚕️ UNIMED</option>
+<option value="KLINI SAÚDE">📈 KLINI SAÚDE</option>
+<option value="CEMERU">🛡️ CEMERU</option>
+<option value="SAMOC">🌍 SAMOC</option>
+<option value="OPLAN SAÚDE">💡 OPLAN SAÚDE</option>
+<option value="ABRABDIR">⚖️ ABRABDIR - Advogados e Bacharéis</option>
+<option value="ABRACEM">💼 ABRACEM - Consultores Empresariais</option>
+<option value="ABA">🌟 ABA - Desenvolvimento Social</option>
+</select>
+</div>
+<button class="secondary" onclick="prevStep(4)">← Voltar</button>
+<button onclick="confirmarCotacao()">Continuar com esta? ➜</button>
+</div>
+</div>
+</div>
+<!-- MODAL FICHA DE CADASTRO -->
+<div id="modal-ficha" class="modal">
+<div class="modal-content">
+<button class="close-btn" onclick="closeModal('modal-ficha')">×</button>
+<h2>📋 Ficha de Cadastro - <span id="ficha-operadora"></span></h2>
+<h4>👤 Dados do Beneficiário Titular</h4>
+<div class="grid-2">
+<div class="form-group"><label>Nome Completo *</label><input type="text" id="cad-nome"></div>
+<div class="form-group"><label>CPF *</label><input type="text" id="cad-cpf"></div>
+<div class="form-group"><label>RG *</label><input type="text" id="cad-rg"></div>
+<div class="form-group"><label>Data de Nascimento *</label><input type="date" id="cad-nasc"></div>
+<div class="form-group">
+<label>Sexo *</label>
+<select id="cad-sexo"><option>Selecione</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select>
+</div>
+<div class="form-group">
+<label>Estado Civil *</label>
+<select id="cad-civil"><option>Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option></select>
+</div>
+</div>
+<div class="form-group"><label>Nome da Mãe *</label><input type="text" id="cad-mae"></div>
+<h4>📍 Endereço</h4>
+<div class="grid-2">
+<div class="form-group"><label>CEP *</label><input type="text" id="cad-cep" onblur="autoFillCEP('cad')"></div>
+<div class="form-group"><label>Cidade/UF</label><input type="text" id="cad-cidade"></div>
+<div class="form-group"><label>Bairro</label><input type="text" id="cad-bairro"></div>
+<div class="form-group"><label>Número</label><input type="text" id="cad-num"></div>
+</div>
+<div class="form-group"><label>Endereço</label><input type="text" id="cad-end"></div>
+<div class="form-group"><label>Complemento</label><input type="text" id="cad-comp"></div>
+<h4>📞 Contato & Outros</h4>
+<div class="grid-2">
+<div class="form-group"><label>Telefone *</label><input type="text" id="cad-tel"></div>
+<div class="form-group"><label>E-mail *</label><input type="email" id="cad-email"></div>
+</div>
+<h4>💼 Vínculo & Profissão</h4>
+<div class="grid-2">
+<div class="form-group">
+<label>Entidade *</label>
+<select id="cad-entidade">
+<option>Selecione...</option><option>FESN</option><option>associação publica</option><option>associação estatutária</option>
+<option>associação do comercio</option><option>associação do gari</option><option>ABPROS</option><option>ANAPROLIE</option><option>Outros</option>
+</select>
+</div>
+<div class="form-group"><label>Profissão *</label><input type="text" id="cad-prof"></div>
+</div>
+<h4>🏥 Dados do Plano</h4>
+<div class="grid-2">
+<div class="form-group">
+<label>Plano *</label>
+<select id="cad-plano"><option>Selecione...</option><option>OURO</option><option>PRATA</option><option>BRONZE</option></select>
+</div>
+<div class="form-group">
+<label>Cobertura</label>
+<select id="cad-cobertura"><option>Sem Coparticipação</option><option>Com Coparticipação</option></select>
+</div>
+</div>
+<h4>📎 Documentos</h4>
+<div class="grid-2">
+<div class="form-group"><label>Doc Frente *</label><input type="file"></div>
+<div class="form-group"><label>Doc Verso *</label><input type="file"></div>
+<div class="form-group"><label>Comprovante Residência *</label><input type="file"></div>
+<div class="form-group"><label>Contracheque *</label><input type="file"></div>
+</div>
+<button class="success" onclick="enviarProposta()">🚀 Enviar Proposta</button>
+</div>
+</div>
+<footer style="background:#333; color:white; text-align:center; padding:10px; margin-top:30px; border-radius:8px;">
+💬 © 2026 Concessionária Inteligente Bem | Contato: (21) 96882-7864
+</footer>
+<script>
+// =====================================================
+// BANCO DE DADOS LOCAL
+// =====================================================
+const DB = {
+getEmpresas: () => JSON.parse(localStorage.getItem('db_empresas') || '{}'),
+setEmpresas: (d) => localStorage.setItem('db_empresas', JSON.stringify(d)),
+getSellers: () => JSON.parse(localStorage.getItem('db_sellers') || '{}'),
+setSellers: (d) => localStorage.setItem('db_sellers', JSON.stringify(d)),
+getProposals: () => JSON.parse(localStorage.getItem('db_proposals') || '[]'),
+setProposals: (d) => localStorage.setItem('db_proposals', JSON.stringify(d)),
+getUser: () => JSON.parse(localStorage.getItem('db_user') || 'null'),
+setUser: (d) => localStorage.setItem('db_user', JSON.stringify(d)),
+logout: () => localStorage.removeItem('db_user')
+};
+// Inicializa vendedor admin padrão
+const sellers = DB.getSellers();
+if (!sellers['21998163817']) {
+sellers['21998163817'] = { name: 'Admin Master', phone: '21998163817', password: '1234', paid: true, type: 'vendedor' };
+DB.setSellers(sellers);
+}
+let currentQuote = {};
+let currentOperator = '';
+let pendingEmpresaCNPJ = '';
+let loginsEmpresaTemp = { qtdSolicitada: 0, cadastrados: 0 };
+let autoQuoteData = {};
+// =====================================================
+// NAVEGAÇÃO
+// =====================================================
+function router(viewName) {
+document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+const target = document.getElementById(`view-${viewName}`);
+if(target) {
+target.classList.add('active');
+window.scrollTo(0, 0);
+}
+if(viewName === 'empresa') renderEmpresaView();
+if(viewName === 'supervisor') renderSupervisor();
+if(viewName === 'gerente') renderGerente();
+if(viewName === 'vendedor') renderVendedor();
+}
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+// =====================================================
+// VALIDAÇÃO DE CNPJ
+// =====================================================
+function validarCNPJ() {
+const cnpj = document.getElementById('emp-cnpj').value.replace(/\D/g, '');
+if (cnpj.length !== 14) {
+alert('CNPJ inválido!');
+return false;
+}
+return true;
+}
+// =====================================================
+// AUTO-PREENCHIMENTO CEP
+// =====================================================
+function autoFillCEP(prefix) {
+const cep = document.getElementById(`${prefix}-cep`).value.replace(/\D/g, '');
+if(cep.length === 8) {
+fetch(`https://viacep.com.br/ws/${cep}/json/`)
+.then(r => r.json())
+.then(d => {
+if(!d.erro) {
+const endEl = document.getElementById(`${prefix}-endereco`) || document.getElementById(`${prefix}-end`);
+const bairroEl = document.getElementById(`${prefix}-bairro`);
+if(endEl) endEl.value = d.logradouro || '';
+if(bairroEl) bairroEl.value = d.bairro || '';
+}
+});
+}
+}
+// =====================================================
+// CADASTRO DE EMPRESA
+// =====================================================
+function cadastrarEmpresa() {
+const cnpj = document.getElementById('emp-cnpj').value.replace(/\D/g, '');
+const tel = document.getElementById('emp-tel').value.replace(/\D/g, '');
+const email = document.getElementById('emp-email').value;
+const senha = document.getElementById('emp-senha').value;
+if(!cnpj || cnpj.length !== 14) {
+alert('CNPJ inválido! Deve conter 14 dígitos.');
+return;
+}
+if(!tel || !email) { alert('Preencha telefone e e-mail!'); return; }
+if(!senha || senha.length < 8 || !/^\d+$/.test(senha)) { alert('Senha deve ter mínimo 8 números!'); return; }
+const empresas = DB.getEmpresas();
+if(empresas[cnpj]) { alert('CNPJ já cadastrado!'); return; }
+empresas[cnpj] = {
+cnpj, tel, email, senha, paid: false,
+vendedores: [], logins: { solicitados: 0, cadastrados: 0 }
+};
+DB.setEmpresas(empresas);
+pendingEmpresaCNPJ = cnpj;
+openModal('modal-pag-empresa');
+document.querySelectorAll('#view-empresa input').forEach(i => i.value = '');
+}
+function confirmarPagEmpresa() {
+const empresas = DB.getEmpresas();
+if(pendingEmpresaCNPJ && empresas[pendingEmpresaCNPJ]) {
+empresas[pendingEmpresaCNPJ].paid = true;
+DB.setEmpresas(empresas);
+alert('✅ Empresa ativada! Agora você pode adicionar vendedores.');
+closeModal('modal-pag-empresa');
+router('empresa');
+document.getElementById('modulo-logins').style.display = 'block';
+renderTabelaLogins(pendingEmpresaCNPJ);
+}
+}
+// =====================================================
+// GESTÃO DE LOGINS (VENDEDORES)
+// =====================================================
+function calcularPrecoLogins() {
+const qtd = parseInt(document.getElementById('qtd-logins').value) || 0;
+const display = document.getElementById('preco-display');
+if(qtd === 0) { display.textContent = ''; return; }
+const precoUnit = qtd > 10 ? 85 : 120;
+const total = qtd * precoUnit;
+display.textContent = `💰 ${qtd} login(s) x R$ ${precoUnit.toFixed(2)} = Total: R$ ${total.toFixed(2)}`;
+loginsEmpresaTemp.qtdSolicitada = qtd;
+loginsEmpresaTemp.cadastrados = 0;
+}
+function gerarPixLogins() {
+const qtd = parseInt(document.getElementById('qtd-logins').value) || 0;
+if(qtd === 0) { alert('Informe a quantidade de logins.'); return; }
+const precoUnit = qtd > 10 ? 85 : 120;
+const total = qtd * precoUnit;
+loginsEmpresaTemp.qtdSolicitada = qtd;
+document.getElementById('preco-display').textContent = `Valor PIX: R$ ${total.toFixed(2)}`;
+openModal('modal-cad-vendedor');
+}
+function cadastrarVendedor() {
+const user = DB.getUser();
+if(!user || (user.type !== 'empresa' && user.type !== 'supervisor')) {
+alert('Acesso inválido.'); return;
+}
+const cnpj = user.cnpj || Object.keys(DB.getEmpresas()).find(c => DB.getEmpresas()[c].paid);
+if(!cnpj) { alert('Empresa não identificada.'); return; }
+const nome = document.getElementById('cad-vend-nome').value;
+const tel = document.getElementById('cad-vend-tel').value.replace(/\D/g, '');
+const cpf = document.getElementById('cad-vend-cpf').value;
+const email = document.getElementById('cad-vend-email').value;
+const cnpj4 = cnpj.substring(0, 4);
+const idAcesso = `${cnpj4}${tel}`;
+if(!nome || !tel || !cpf || !email) { alert('Preencha todos os campos!'); return; }
+const empresas = DB.getEmpresas();
+const emp = empresas[cnpj];
+let precoCobrado = loginsEmpresaTemp.qtdSolicitada > 10 ? 85 : 120;
+if(loginsEmpresaTemp.qtdSolicitada > 10 && emp.vendedores.length + 1 < loginsEmpresaTemp.qtdSolicitada) {
+precoCobrado = 120;
+}
+emp.vendedores.push({ id: idAcesso, nome, tel, cpf, email, paid: true, type: 'vendedor', empresaCnpj: cnpj });
+const sellers = DB.getSellers();
+sellers[idAcesso] = { name: nome, phone: tel, cpf, email, password: '1234', paid: true, type: 'vendedor', empresaCnpj: cnpj };
+DB.setSellers(sellers);
+DB.setEmpresas(empresas);
+document.getElementById('id-vend2-display').textContent = `ID de Acesso: ${idAcesso}`;
+document.getElementById('qr-vend2').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX_VENDEDOR_${precoCobrado}`;
+closeModal('modal-cad-vendedor');
+openModal('modal-pag-vend2');
+document.querySelectorAll('#modal-cad-vendedor input').forEach(i => i.value = '');
+}
+function confirmarPagVend2() {
+alert('✅ Vendedor 2 ativado com sucesso!');
+closeModal('modal-pag-vend2');
+const user = DB.getUser();
+if(user && user.cnpj) renderTabelaLogins(user.cnpj);
+}
+function renderTabelaLogins(cnpj) {
+const empresas = DB.getEmpresas();
+const vends = empresas[cnpj]?.vendedores || [];
+const tbody = document.getElementById('tabela-logins');
+tbody.innerHTML = vends.map(v => `
+<tr>
+<td>${v.id}</td>
+<td>${v.nome}</td>
+<td>${v.paid ? '✅ Ativo' : '⏳ Pendente'}</td>
+</tr>
+`).join('') || '<tr><td colspan="3">Nenhum vendedor cadastrado</td></tr>';
+}
+function renderEmpresaView() {
+const user = DB.getUser();
+if(user && user.cnpj) {
+document.getElementById('modulo-logins').style.display = 'block';
+renderTabelaLogins(user.cnpj);
+}
+}
+// =====================================================
+// ATENDIMENTO AUTOMÁTICO
+// =====================================================
+function autoNext(step) {
+document.querySelectorAll('#modal-atendimento-auto .step').forEach(s => s.classList.remove('active'));
+document.getElementById(`auto-step-${step}`).classList.add('active');
+}
+function verificarCNPJAuto() {
+const tel = document.getElementById('auto-tel-vend').value.replace(/\D/g, '');
+const msg = document.getElementById('auto-cnpj-msg');
+if(tel.length >= 8) {
+const sellers = DB.getSellers();
+const vendedor = Object.values(sellers).find(v => v.phone && v.phone.includes(tel));
+if(vendedor && vendedor.empresaCnpj) {
+const cnpj4 = vendedor.empresaCnpj.substring(0, 4);
+msg.textContent = ` Empresa identificada: ${cnpj4}XXXXXX0001XX`;
+} else {
+msg.textContent = '';
+}
+} else {
+msg.textContent = '';
+}
+}
+function autoIdentificar() {
+const tel = document.getElementById('auto-tel-vend').value.replace(/\D/g, '');
+if(!tel) { alert('Digite o telefone do vendedor.'); return; }
+const sellers = DB.getSellers();
+const vendedor = Object.values(sellers).find(v => v.phone && v.phone.includes(tel));
+if(vendedor) {
+autoQuoteData.vendedorId = vendedor.phone;
+autoQuoteData.vendedorNome = vendedor.name;
+autoQuoteData.empresaCnpj = vendedor.empresaCnpj || '';
+document.getElementById('auto-empresa-info').textContent = `✅ Vendedor identificado: ${vendedor.name}
+🏢 Empresa: ${vendedor.empresaCnpj ? vendedor.empresaCnpj.substring(0,4)+'XXXXXX0001XX' : 'Admin'}`;
+} else {
+autoQuoteData.vendedorId = '21998163817';
+autoQuoteData.vendedorNome = 'Admin Master';
+autoQuoteData.empresaCnpj = '';
+document.getElementById('auto-empresa-info').textContent = 'ℹ️ Vendedor não encontrado. Proposta será atribuída ao Admin.';
+}
+autoNext(5);
+}
+function atualizarTabelaAuto() {
+const empresa = document.getElementById('auto-empresa-escolha').value;
+const tbody = document.getElementById('tbody-auto');
+if(!empresa) {
+tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Selecione uma empresa para ver os preços</td></tr>';
+return;
+}
+const precos = {
+'AMIL': { sem: ['R$ 280', 'R$ 320', 'R$ 380', 'R$ 450', 'R$ 580'], com: ['R$ 220', 'R$ 250', 'R$ 300', 'R$ 360', 'R$ 460'] },
+'UNIMED': { sem: ['R$ 290', 'R$ 330', 'R$ 390', 'R$ 460', 'R$ 590'], com: ['R$ 230', 'R$ 260', 'R$ 310', 'R$ 370', 'R$ 470'] },
+'KLINI SAÚDE': { sem: ['R$ 260', 'R$ 300', 'R$ 360', 'R$ 430', 'R$ 550'], com: ['R$ 200', 'R$ 230', 'R$ 280', 'R$ 340', 'R$ 440'] },
+'CEMERU': { sem: ['R$ 270', 'R$ 310', 'R$ 370', 'R$ 440', 'R$ 560'], com: ['R$ 210', 'R$ 240', 'R$ 290', 'R$ 350', 'R$ 450'] },
+'SAMOC': { sem: ['R$ 250', 'R$ 290', 'R$ 350', 'R$ 420', 'R$ 540'], com: ['R$ 190', 'R$ 220', 'R$ 270', 'R$ 330', 'R$ 430'] },
+'OPLAN SAÚDE': { sem: ['R$ 240', 'R$ 280', 'R$ 340', 'R$ 410', 'R$ 530'], com: ['R$ 180', 'R$ 210', 'R$ 260', 'R$ 320', 'R$ 420'] }
+};
+const copart = document.getElementById('q-copart') ? document.getElementById('q-copart').checked : false;
+const tipo = copart ? 'com' : 'sem';
+const preco = precos[empresa][tipo];
+tbody.innerHTML = `
+<tr>
+<td>${empresa}</td>
+<td>Completo</td>
+<td>${preco[0]}</td>
+<td>${preco[1]}</td>
+<td>${preco[2]}</td>
+<td>${preco[3]}</td>
+<td>${preco[4]}</td>
+</tr>
+`;
+}
+function autoContinuar() {
+autoQuoteData.qtd = document.getElementById('auto-qtd').value;
+autoQuoteData.idades = document.getElementById('auto-idades').value;
+autoQuoteData.profissao = document.getElementById('auto-profissao').value;
+autoQuoteData.operadora = document.getElementById('auto-empresa-escolha').value;
+if(!autoQuoteData.operadora) {
+alert('Selecione uma empresa!');
+return;
+}
+closeModal('modal-atendimento-auto');
+document.getElementById('ficha-operadora').textContent = autoQuoteData.operadora;
+openModal('modal-ficha');
+}
+// =====================================================
+// LOGIN (CORRIGIDO)
+// =====================================================
+function checkPerfilLogin() {
+const perfil = document.getElementById('login-perfil').value;
+if(perfil === 'vendedor') {
+document.getElementById('login-tel').placeholder = 'Telefone';
+} else if(perfil === 'empresa') {
+document.getElementById('login-tel').placeholder = 'CNPJ';
+} else {
+document.getElementById('login-tel').placeholder = 'Telefone ou ID de Acesso';
+}
+}
+function doLogin() {
+const perfil = document.getElementById('login-perfil').value;
+const id = document.getElementById('login-tel').value.replace(/\D/g, '');
+const senha = document.getElementById('login-senha').value;
+if(!perfil || !id || !senha) { alert('Preencha todos os campos!'); return; }
+
+if(perfil === 'empresa') {
+const empresas = DB.getEmpresas();
+const emp = empresas[id];
+if(!emp || emp.senha !== senha) { alert('CNPJ ou senha inválidos!'); return; }
+if(!emp.paid) { alert('Empresa não ativada. Complete o pagamento.'); return; }
+DB.setUser({ type: 'empresa', cnpj: id });
+closeModal('modal-login');
+router('empresa');
+document.getElementById('modulo-logins').style.display = 'block';
+renderTabelaLogins(id);
+alert('✅ Login realizado! Bem-vindo, Empresa.');
+} else if(perfil === 'vendedor') {
+const sellers = DB.getSellers();
+const vendedor = sellers[id];
+if(!vendedor || vendedor.password !== senha) { alert('ID ou senha inválidos!'); return; }
+if(!vendedor.paid) { alert('Vendedor não ativado.'); return; }
+DB.setUser({ type: 'vendedor', phone: vendedor.phone, name: vendedor.name, id, empresaCnpj: vendedor.empresaCnpj });
+closeModal('modal-login');
+router('vendedor');
+document.getElementById('msg-vendedor-info').innerHTML = `<strong>Vendedor:</strong> ${vendedor.name}<br><strong>ID:</strong> ${id}`;
+alert('✅ Login realizado! Bem-vindo, Vendedor.');
+} else if(perfil === 'supervisor' || perfil === 'gerente') {
+// Login direto para perfis administrativos (senha padrão: 123456)
+if(senha !== '123456') { 
+alert('❌ Senha incorreta! (Padrão: 123456)'); 
+return; 
+}
+DB.setUser({ type: perfil, id: perfil });
+closeModal('modal-login');
+router(perfil);
+alert(`✅ Login realizado! Bem-vindo, ${perfil === 'supervisor' ? 'Supervisor' : 'Gerente'}.`);
+}
+}
+// =====================================================
+// COTAÇÃO
+// =====================================================
+function nextStep(n) {
+document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+document.getElementById(`step-${n}`).classList.add('active');
+}
+function prevStep(n) { nextStep(n); }
+function togglePriceTable() {
+const copart = document.getElementById('q-copart').checked;
+document.getElementById('table-sem-copart').classList.toggle('hidden', copart);
+document.getElementById('table-com-copart').classList.toggle('hidden', !copart);
+}
+function identificarVendedor() {
+const tel = document.getElementById('q-tel-vendedor').value.replace(/\D/g, '');
+if(!tel) { alert('Digite o telefone do vendedor.'); return; }
+const sellers = DB.getSellers();
+const vendedor = sellers[tel];
+if(vendedor) {
+currentQuote.sellerPhone = tel;
+currentQuote.sellerName = vendedor.name;
+currentQuote.geraComissao = true;
+alert(`✅ Vendedor identificado: ${vendedor.name}
+💰 Proposta gerará comissão.`);
+} else {
+currentQuote.sellerPhone = '21998163817';
+currentQuote.sellerName = 'Admin Master';
+currentQuote.geraComissao = false;
+alert('ℹ️ Vendedor não encontrado. Proposta atribuída ao Admin.');
+}
+nextStep(5);
+}
+function confirmarCotacao() {
+const op = document.getElementById('q-operadora').value;
+if(!op) { alert('Selecione uma operadora.'); return; }
+if(confirm('Deseja continuar com o cadastro para esta operadora?')) {
+currentOperator = op;
+currentQuote.operator = op;
+currentQuote.copart = document.getElementById('q-copart').checked;
+closeModal('modal-cotacao');
+openModal('modal-ficha');
+document.getElementById('ficha-operadora').textContent = op;
+}
+}
+function enviarProposta() {
+const nome = document.getElementById('cad-nome').value;
+if(!nome) { alert('Preencha o nome completo.'); return; }
+const vendedorFinal = autoQuoteData.vendedorId || currentQuote.sellerPhone;
+const nomeVendedorFinal = autoQuoteData.vendedorId ? (DB.getSellers()[autoQuoteData.vendedorId]?.name || 'Vendedor') : currentQuote.sellerName;
+const comissao = autoQuoteData.vendedorId || currentQuote.geraComissao;
+const empresaCnpj = autoQuoteData.empresaCnpj || '';
+const proposta = {
+id: 'PROP-' + Date.now(),
+protocolo: 'PROP-' + Date.now().toString().slice(-8),
+cliente: nome,
+operadora: autoQuoteData.operadora || currentOperator,
+vendedor: vendedorFinal,
+vendedorNome: nomeVendedorFinal,
+empresaCnpj: empresaCnpj,
+geraComissao: comissao,
+status: 'Pendente Supervisor',
+data: new Date().toLocaleDateString()
+};
+const props = DB.getProposals();
+props.push(proposta);
+DB.setProposals(props);
+let msgComissao = comissao ? '\n💰 Comissão será gerada para o vendedor!' : '\n📋 Proposta vinculada à Empresa/Admin.';
+alert(`✅ Proposta enviada!
+Protocolo: ${proposta.protocolo}
+Vendedor: ${proposta.vendedorNome}
+Status: Pendente Supervisor${msgComissao}`);
+closeModal('modal-ficha');
+document.querySelectorAll('#modal-ficha input, #modal-ficha select').forEach(i => i.value = '');
+currentQuote = {};
+autoQuoteData = {};
+nextStep(1);
+}
+// =====================================================
+// PAINÉIS
+// =====================================================
+function renderSupervisor() {
+const props = DB.getProposals().filter(p => p.status.includes('Supervisor'));
+const tbody = document.getElementById('tbody-supervisor');
+tbody.innerHTML = props.length ? props.map(p => `
+<tr>
+<td>${p.protocolo}</td>
+<td>${p.cliente}</td>
+<td>${p.operadora}</td>
+<td>${p.vendedorNome}</td>
+<td>${p.status}</td>
+<td>
+<button class="success" style="width:auto; padding:5px 10px;" onclick="acaoSup('${p.id}', 'Aprovado')">✅ Aprovar</button>
+<button class="danger" style="width:auto; padding:5px 10px;" onclick="acaoSup('${p.id}', 'Reprovado')">❌ Reprovar</button>
+</td>
+</tr>
+`).join('') : '<tr><td colspan="6">Aguardando propostas...</td></tr>';
+}
+function renderGerente() {
+const props = DB.getProposals().filter(p => p.status.includes('Gerente'));
+const tbody = document.getElementById('tbody-gerente');
+tbody.innerHTML = props.length ? props.map(p => `
+<tr>
+<td>${p.protocolo}</td>
+<td>${p.cliente}</td>
+<td>${p.operadora}</td>
+<td>${p.status}</td>
+<td>
+<button class="success" style="width:auto; padding:5px 10px;" onclick="acaoGer('${p.id}', true)">✅ Finalizar</button>
+<button class="danger" style="width:auto; padding:5px 10px;" onclick="acaoGer('${p.id}', false)">❌ Recusar</button>
+</td>
+</tr>
+`).join('') : '<tr><td colspan="5">Aguardando validações...</td></tr>';
+}
+function renderVendedor() {
+const user = DB.getUser();
+const myId = user?.id || user?.phone || '21998163817';
+const props = DB.getProposals().filter(p => p.vendedor === myId || p.empresaCnpj === user?.cnpj);
+const tbody = document.getElementById('tbody-vendedor');
+tbody.innerHTML = props.length ? props.map(p => `
+<tr>
+<td>${p.protocolo}</td>
+<td>${p.cliente}</td>
+<td>${p.operadora}</td>
+<td>${p.status}</td>
+<td>${p.geraComissao ? '💰 Sim' : '📋 Não'}</td>
+</tr>
+`).join('') : '<tr><td colspan="5">Nenhum cliente cadastrado...</td></tr>';
+}
+function acaoSup(id, decisao) {
+const props = DB.getProposals();
+const p = props.find(x => x.id === id);
+if(p) {
+p.status = decisao === 'Aprovado' ? 'Aprovado Supervisor / Pendente Gerente' : 'Reprovado Supervisor';
+DB.setProposals(props);
+renderSupervisor();
+alert(`Supervisor: Proposta ${decisao}! Encaminhada ao Gerente.`);
+}
+}
+function acaoGer(id, aprovou) {
+const props = DB.getProposals();
+const p = props.find(x => x.id === id);
+if(p) {
+if(aprovou) {
+const empresa = prompt('Escolha a concessionária para envio:\n1 - Unimed\n2 - Meia Lua');
+const chosen = empresa === '1' ? 'Unimed' : (empresa === '2' ? 'Meia Lua' : 'Outra');
+p.status = `Aprovado Gerente / Enviado para ${chosen}`;
+alert(`✅ Proposta APROVADA e encaminhada para ${chosen}!\nNotificação enviada à Empresa.`);
+} else {
+p.status = 'Recusado Gerente';
+alert('❌ Proposta RECUSADA pelo Gerente.');
+}
+DB.setProposals(props);
+renderGerente();
+}
+}
+function logout() {
+DB.logout();
+router('home');
+alert('✅ Logout realizado com sucesso!');
+}
+// INICIALIZAÇÃO
+window.onload = () => router('home');
+</script>
+</body>
+</html>

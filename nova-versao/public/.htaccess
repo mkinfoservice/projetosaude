@@ -1,0 +1,40 @@
+# ===========================================
+# Concessionária Inteligente Bem — public/.htaccess
+# Roteamento principal via index.php
+# ===========================================
+
+Options -Indexes
+
+RewriteEngine On
+
+# Força HTTPS em produção
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Permite acesso direto a arquivos e pastas que existem
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Tudo o mais vai para o index.php (front controller)
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Headers de segurança
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Cache para assets estáticos
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|woff2|woff|ttf|ico|svg)$">
+    Header set Cache-Control "public, max-age=2592000"
+    Header set Expires "access plus 1 month"
+</FilesMatch>
+
+# Bloqueia acesso a arquivos sensíveis
+<FilesMatch "\.(env|sql|log|bak|sh)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

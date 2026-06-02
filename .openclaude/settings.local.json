@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mysql:*)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SHOW TABLES FROM concessionaria_bem;\" 2>&1)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SHOW DATABASES;\" 2>&1)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"CREATE DATABASE IF NOT EXISTS concessionaria_bem CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\" 2>&1)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SHOW TABLES FROM concessionaria_bem; SELECT COUNT\\(*\\) as operadoras FROM concessionaria_bem.operadoras; SELECT COUNT\\(*\\) as planos FROM concessionaria_bem.planos;\" 2>&1)",
+      "Bash(curl -s -H \"Host: concessionaria-bem.test\" http://127.0.0.1/empresa/cadastro)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -H \"Host: concessionaria-bem.test\" http://127.0.0.1/admin/empresa)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -L -H \"Host: concessionaria-bem.test\" http://127.0.0.1/api/webhook/asaas)",
+      "Bash(curl -s -H \"Host: concessionaria-bem.test\" http://127.0.0.1/admin/empresa/vendedores)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SELECT id, razao_social, email, status, pix_status, criado_em FROM concessionaria_bem.empresas;\" 2>&1)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"UPDATE concessionaria_bem.empresas SET status=''ATIVO'', pix_status=''CONFIRMADO'' WHERE status=''PENDENTE_PAGAMENTO'';\")",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SELECT id, razao_social, status, pix_status FROM concessionaria_bem.empresas;\" 2>&1)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"UPDATE concessionaria_bem.vendedores SET status='ATIVO', pix_status='CONFIRMADO' WHERE status='PENDENTE_PAGAMENTO'; SELECT id, nome_completo, perfil, status FROM concessionaria_bem.vendedores;\" 2>&1)",
+      "Bash(curl -s -H \"Host: concessionaria-bem.test\" http://127.0.0.1/admin/vendedor/nova-proposta)",
+      "Bash(curl:*)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SELECT id, razao_social FROM concessionaria_bem.empresas;\")",
+      "Bash(php:*)",
+      "Bash(\"E:/laragon/bin/php/php8.3.30/php.exe\" -r \"echo password_hash\\('Teste@123', PASSWORD_BCRYPT, ['cost'=>12]\\);\")",
+      "Bash(\"E:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe\" -r \"echo password_hash\\('Teste@123', PASSWORD_BCRYPT, ['cost'=>12]\\);\" a senha tem q ter 8 caracteres, gere dados ficticios de pessoas só para testar)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u:*)",
+      "Bash(\"E:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root -h 127.0.0.1 -e \"SELECT id, nome_completo, perfil, telefone, status FROM concessionaria_bem.vendedores ORDER BY id;\")",
+      "Bash(find 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao' -name *.sql)",
+      "Bash(grep -v \"//\\\\|^\\\\s*//\")",
+      "Bash(grep -rn \"benefit-list\\\\|plan-benefits-modal\\\\|Beneficios\\\\|benefit_list\" 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao/' --include=*.php)",
+      "Bash(grep -rn \"benefit-list\\\\|plan-benefits-modal\\\\|Beneficios\\\\|benefit\" 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao/' --include=*.js)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(head -20 grep -n \"whatsapp-float\\\\|navbar-logo\\\\|logo-icon\\\\|nav-actions\\\\b\\\\|btn-full\\\\|text-danger\" \"E:/DEV/Projeto Concessionaria Inteligente/nova-versao/public/assets/css/app.css\")",
+      "Bash(grep -oE class=\"\"[^\"\"]*\"\" 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao/app/views/pages/vendedor/dashboard.php')",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -oE class=\"\"[^\"\"]*\"\" 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao/app/views/pages/login.php')",
+      "Bash(find 'E:/DEV/Projeto Concessionaria Inteligente/nova-versao/app/views/pages' -name *.php)"
+    ]
+  }
+}

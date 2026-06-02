@@ -1,0 +1,13 @@
+# ===========================================
+# storage/logs/.htaccess
+# Bloqueia qualquer acesso HTTP aos arquivos de log.
+# ===========================================
+
+Options -Indexes
+
+Order allow,deny
+Deny from all
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
