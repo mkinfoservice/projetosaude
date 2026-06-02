@@ -33,4 +33,8 @@ EOF
 chown www-data:www-data /var/www/html/.env
 chmod 640 /var/www/html/.env
 
+# Docker routing is handled by FallbackResource. Remove any runtime artifact
+# restored by the platform before Apache can inspect it.
+find /var/www/html -name '.htaccess' -delete
+
 exec apache2-foreground
