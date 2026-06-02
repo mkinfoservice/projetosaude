@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: concessionaria-bem
+    env: docker
+    dockerfilePath: ./nova-versao/Dockerfile
+    dockerContext: ./nova-versao
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        value: cardsaude_db.mysql.dbaas.com.br
+      - key: DB_NAME
+        value: cardsaude_db
+      - key: DB_USER
+        value: cardsaude_db
+      - key: DB_PASS
+        sync: false
+      - key: DB_CHARSET
+        value: utf8mb4
+      - key: DB_PORT
+        value: "3306"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false
+      - key: APP_SECRET
+        generateValue: true
+      - key: ASAAS_API_URL
+        value: https://api-sandbox.asaas.com/v3
+      - key: ASAAS_API_KEY
+        sync: false
+      - key: ASAAS_WEBHOOK_TOKEN
+        generateValue: true
+      - key: SESSION_LIFETIME
+        value: "3600"
+      - key: LOG_ENABLED
+        value: "true"
+      - key: UPLOAD_MAX_SIZE_MB
+        value: "10"

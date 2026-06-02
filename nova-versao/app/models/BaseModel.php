@@ -110,6 +110,8 @@ abstract class BaseModel
     {
         if (empty($data)) return false;
 
+        $data['atualizado_em'] = date('Y-m-d H:i:s');
+
         $sets   = [];
         $params = [];
 
