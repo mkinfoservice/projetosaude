@@ -3,15 +3,13 @@ FROM php:8.1-apache
 RUN apt-get update && apt-get install -y \
     libzip-dev unzip libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install pdo_mysql \
-    && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
 COPY . /var/www/html/
 
-# Remove o .htaccess da raiz — é só para Locaweb, não para Docker
-RUN rm -f /var/www/html/.htaccess
+RUN rm -f /var/www/html/.htaccess /var/www/html/public/.htaccess
 
 RUN mkdir -p /var/www/html/storage/uploads /var/www/html/storage/logs \
     && chown -R www-data:www-data /var/www/html \
