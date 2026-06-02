@@ -6,13 +6,12 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
-# Garante que mod_rewrite está ativo via arquivo de módulo
-RUN echo "LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so" \
-    >> /etc/apache2/mods-available/rewrite.load 2>/dev/null || true
-
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
 COPY . /var/www/html/
+
+# Remove o .htaccess da raiz — é só para Locaweb, não para Docker
+RUN rm -f /var/www/html/.htaccess
 
 RUN mkdir -p /var/www/html/storage/uploads /var/www/html/storage/logs \
     && chown -R www-data:www-data /var/www/html \
