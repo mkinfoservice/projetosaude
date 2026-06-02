@@ -26,9 +26,11 @@ Thumbs.db
 .idea/
 
 # Docker
-.dockerignore
 docker-compose.override.yml
 
 # Archives
 *.zip
-*.sql
+# *.sql removido — schema.sql precisa ser commitado para deploy
+
+# Credenciais expostas (nunca commitar)
+backend/backend.env.txt

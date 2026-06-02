@@ -1,0 +1,8 @@
+.env
+/.htaccess
+storage/uploads/*
+storage/logs/*
+node_modules/
+.git/
+*.md
+docs/
