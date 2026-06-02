@@ -9,7 +9,8 @@ COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
 COPY . /var/www/html/
 
-RUN rm -f /var/www/html/.htaccess /var/www/html/public/.htaccess
+# Remove todos os .htaccess — routing feito via FallbackResource no apache.conf
+RUN find /var/www/html -name '.htaccess' -delete
 
 RUN mkdir -p /var/www/html/storage/uploads /var/www/html/storage/logs \
     && chown -R www-data:www-data /var/www/html \
